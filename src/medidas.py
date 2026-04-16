@@ -1,2 +1,0 @@
-def mean(data):
-    pass
