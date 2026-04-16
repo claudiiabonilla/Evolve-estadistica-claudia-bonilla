@@ -79,19 +79,23 @@ def regresion_lineal_multiple(X_train, y_train, X_test):
     - np.linalg.lstsq es numéricamente más estable que invertir directamente.
     """
 
-    # TODO: Paso 1 — Añadir columna de unos a X_train para el intercepto β₀
-    # Pista: np.ones((n, 1)) y np.hstack([ones, X_train])
-    X_train_b = None  # ← Reemplaza None con tu implementación
+    # Paso 1 — Añadir columna de unos a X_train para el intercepto β₀
 
-    # TODO: Paso 2 — Calcular los coeficientes β con la fórmula OLS
+    ones = np.ones((X_train.shape[0], 1))
+    X_train_b = np.hstack([ones, X_train])
+
+    # Paso 2 — Calcular los coeficientes β con la fórmula OLS
     # β = (XᵀX)⁻¹ Xᵀy
-    coefs = None  # ← Reemplaza None con tu implementación
 
-    # TODO: Paso 3 — Añadir columna de unos a X_test de la misma forma
-    X_test_b = None  # ← Reemplaza None con tu implementación
+    coefs, residuals, rank, s = np.linalg.lstsq(X_train_b, y_train, rcond=None)
 
-    # TODO: Paso 4 — Calcular predicciones ŷ = X_test_b · β
-    y_pred = None  # ← Reemplaza None con tu implementación
+    # Paso 3 — Añadir columna de unos a X_test de la misma forma
+    ones = np.ones((X_test.shape[0], 1))
+    X_test_b = np.hstack([ones, X_test])
+
+    # Paso 4 — Calcular predicciones ŷ = X_test_b · β
+
+    y_pred = X_test_b @ coefs
 
     return coefs, y_pred
 
@@ -115,8 +119,11 @@ def calcular_mae(y_real, y_pred):
     -------
     float — Valor del MAE
     """
-    # TODO: Implementa el MAE sin usar sklearn
-    pass
+    # Implementa el MAE sin usar sklearn
+
+    mae = np.mean(np.abs(y_real - y_pred))
+
+    return mae
 
 
 def calcular_rmse(y_real, y_pred):
@@ -134,8 +141,11 @@ def calcular_rmse(y_real, y_pred):
     -------
     float — Valor del RMSE
     """
-    # TODO: Implementa el RMSE sin usar sklearn
-    pass
+    # Implementa el RMSE sin usar sklearn
+
+    rmse = np.sqrt(np.mean((y_real - y_pred) ** 2))
+
+    return rmse
 
 
 def calcular_r2(y_real, y_pred):
@@ -156,7 +166,10 @@ def calcular_r2(y_real, y_pred):
     float — Valor del R² (entre -∞ y 1; cuanto más cercano a 1, mejor)
     """
     # TODO: Implementa el R² sin usar sklearn
-    pass
+
+    r2 = 1 - np.sum((y_real - y_pred)** 2) / np.sum((y_real - np.mean(y_real)) ** 2)
+
+    return r2
 
 
 # =============================================================================
@@ -182,7 +195,16 @@ def graficar_real_vs_predicho(y_real, y_pred, ruta_salida="output/ej3_prediccion
     #   - Dibuja la línea de referencia perfecta: y = x
     #   - Añade etiquetas a los ejes y título
     #   - Guarda con plt.savefig(ruta_salida, dpi=150, bbox_inches='tight')
-    pass
+
+    plt.scatter(y_real, y_pred, alpha=0.6)
+    min_val = min(y_real.min(), y_pred.min())
+    max_val = max(y_real.max(), y_pred.max())
+    plt.plot([min_val, max_val], [min_val, max_val], 'r--')
+    plt.xlabel("Valores reales")
+    plt.ylabel("Predicciones")
+    plt.title("Valores Reales vs. Valores Predichos")
+    plt.savefig(ruta_salida, dpi=150, bbox_inches='tight')
+    plt.close()
 
 
 # =============================================================================
