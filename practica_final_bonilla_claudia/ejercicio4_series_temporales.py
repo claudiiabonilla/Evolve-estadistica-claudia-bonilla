@@ -114,8 +114,17 @@ def visualizar_serie(serie):
     - Añade título, etiquetas de ejes y una cuadrícula suave
     - Guarda con plt.savefig("output/ej4_serie_original.png", dpi=150, bbox_inches='tight')
     """
-    # TODO: Implementa la visualización de la serie
-    pass
+    fig, ax = plt.subplots(figsize=(14, 4))
+
+    ax.plot(serie.index, serie.values, linewidth=1)
+
+    ax.set_title("Serie temporal completa")
+    ax.set_xlabel("Año")
+    ax.set_ylabel("Valor")
+    plt.xticks(rotation=45, fontsize= 10)
+    ax.grid(True, alpha=0.3)
+    plt.savefig("output/ej4_serie_original.png", dpi=150, bbox_inches="tight")
+    plt.close()
 
 
 # =============================================================================
@@ -148,7 +157,13 @@ def descomponer_serie(serie):
     # resultado = seasonal_decompose(...)
     # fig = resultado.plot()
     # ...
-    pass
+    from statsmodels.tsa.seasonal import seasonal_decompose
+    resultado = seasonal_decompose(serie, model='additive', period=365)
+    fig = resultado.plot()
+    fig.savefig("output/ej4_descomposicion.png", dpi=150, bbox_inches="tight")
+    plt.close()
+
+    return resultado
 
 
 # =============================================================================
@@ -186,29 +201,49 @@ def analizar_residuo(residuo):
     - ACF / PACF:
         from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
     """
-    # TODO: Limpia el residuo (elimina NaN al inicio/fin)
-    residuo_limpio = None  # ← residuo.dropna()
+    # Limpia el residuo (elimina NaN al inicio/fin)
+    
+    residuo_limpio = residuo.dropna()
 
-    # TODO: Calcula estadísticos básicos
-    media    = None
-    std      = None
-    asimetria = None
-    curtosis  = None
+    # Calcula estadísticos básicos
+
+    media    = residuo_limpio.mean()
+    std      = residuo_limpio.std()
+    asimetria = residuo_limpio.skew()
+    curtosis  = residuo_limpio.kurtosis()
 
 
-    # TODO: Test de estacionariedad (ADF)
-    # from statsmodels.tsa.stattools import adfuller
-    # resultado_adf = adfuller(residuo_limpio)
-    # p_adf = resultado_adf[1]
+    # Test de estacionariedad (ADF)
 
-    # TODO: Gráfico ACF y PACF del residuo → output/ej4_acf_pacf.png
-    pass
+    from statsmodels.tsa.stattools import adfuller
+    resultado_adf = adfuller(residuo_limpio)
+    p_adf = resultado_adf[1]
 
-    # TODO: Histograma del residuo con curva normal superpuesta
-    # → output/ej4_histograma_ruido.png
-    # Pista: usa scipy.stats.norm.pdf para la curva teórica
-    pass
+    # Gráfico ACF y PACF del residuo → output/ej4_acf_pacf.png
 
+    from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
+    fig, axes = plt.subplots(1, 2, figsize=(14, 4))
+    plot_acf(residuo_limpio,  ax=axes[0])
+    plot_pacf(residuo_limpio, ax=axes[1])
+    axes[0].set_title("ACF del residuo")
+    axes[1].set_title("PACF del residuo")
+    plt.savefig("output/ej4_acf_pacf.png", dpi=150, bbox_inches="tight")
+    plt.close()
+
+    # Histograma del residuo con curva normal superpuesta
+
+    from scipy.stats import norm
+    fig, ax = plt.subplots(figsize=(14, 4))
+    ax.hist(residuo_limpio, bins=30, density=True, alpha=0.6)
+    x = np.linspace(residuo_limpio.min(), residuo_limpio.max(), 100)
+    pdf = norm.pdf(x, loc=media, scale=std)
+    ax.plot(x, pdf, linewidth=2)
+    ax.set_title("Histograma del residuo + Normal ajustada")
+    ax.set_xlabel("Valor")
+    ax.set_ylabel("Densidad")
+
+    plt.savefig("output/ej4_histograma_ruido.png", dpi=150, bbox_inches="tight")
+    plt.close()
 
 # =============================================================================
 # MAIN — Ejecuta el pipeline completo
