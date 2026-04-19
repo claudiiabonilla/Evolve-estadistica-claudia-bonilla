@@ -165,7 +165,7 @@ def calcular_r2(y_real, y_pred):
     -------
     float — Valor del R² (entre -∞ y 1; cuanto más cercano a 1, mejor)
     """
-    # TODO: Implementa el R² sin usar sklearn
+    # Implementa el R² sin usar sklearn
 
     r2 = 1 - np.sum((y_real - y_pred)** 2) / np.sum((y_real - np.mean(y_real)) ** 2)
 
@@ -189,12 +189,7 @@ def graficar_real_vs_predicho(y_real, y_pred, ruta_salida="output/ej3_prediccion
     y_pred      : np.ndarray — Predicciones del modelo
     ruta_salida : str        — Ruta donde guardar la imagen
     """
-    # TODO: Implementa la visualización
-    # Pistas:
-    #   - plt.scatter(y_real, y_pred, alpha=0.6)
-    #   - Dibuja la línea de referencia perfecta: y = x
-    #   - Añade etiquetas a los ejes y título
-    #   - Guarda con plt.savefig(ruta_salida, dpi=150, bbox_inches='tight')
+    # Implementa la visualización
 
     plt.scatter(y_real, y_pred, alpha=0.6)
     min_val = min(y_real.min(), y_pred.min())
