@@ -1,0 +1,9 @@
+DETECCIÓN DE OUTLIERS
+======================
+
+Método: IQR
+
+Límite inferior: -1641.17
+Límite superior: 3388.96
+
+primary_energy_consumption: 143 outliers
